@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test HTML</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --accent: #22d3ee;
+      --muted: #9ca3af;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+      background: radial-gradient(600px circle at 10% 10%, #0b1220, var(--bg));
+      color: var(--text);
+    }
+    header {
+      padding: 24px; border-bottom: 1px solid #1f2937;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .badge { padding: 6px 10px; border: 1px solid #1f2937; border-radius: 999px; color: var(--muted); }
+    main {
+      max-width: 900px; margin: 0 auto; padding: 24px; display: grid; gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+    section {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid #1f2937; border-radius: 12px; padding: 16px;
+    }
+    h2 { margin: 0 0 10px; font-size: 18px; }
+    .row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+    input[type="text"], select {
+      background: #0b1220; color: var(--text); border: 1px solid #1f2937; border-radius: 8px;
+      padding: 8px 10px; width: 100%;
+    }
+    button {
+      background: var(--accent); color: #0b1220; border: none; border-radius: 8px; padding: 8px 12px;
+      font-weight: 600; cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .log {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #0b1220; border: 1px dashed #1f2937; border-radius: 8px; padding: 10px; min-height: 80px;
+      white-space: pre-wrap;
+    }
+    .ok { color: #34d399; }
+    .warn { color: #f59e0b; }
+    .err { color: #f87171; }
+    footer { padding: 24px; color: var(--muted); text-align: center; }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">Test HTML</div>
+    <strong>Interacción rápida</strong>
+  </header>
+
+  <main>
+    <section aria-labelledby="typography">
+      <h2 id="typography">Tipografía y semántica</h2>
+      <p><strong>Texto:</strong> Esto es un párrafo con <em>énfasis</em> y <a href="#" id="demo-link">un enlace</a>.</p>
+      <ul>
+        <li><strong>Lista:</strong> Item 1</li>
+        <li><strong>Lista:</strong> Item 2</li>
+      </ul>
+      <div class="row">
+        <label for="heading-text"><strong>Encabezado dinámico:</strong></label>
+        <input id="heading-text" type="text" placeholder="Escribe y verás el título cambiar..." />
+      </div>
+    </section>
+
+    <section aria-labelledby="controls">
+      <h2 id="controls">Controles y eventos</h2>
+      <div class="row">
+        <select id="theme">
+          <option value="default">Tema: Default</option>
+          <option value="solar">Tema: Solar</option>
+          <option value="forest">Tema: Forest</option>
+        </select>
+        <button id="testBtn">Probar</button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </section>
+
+    <section aria-labelledby="forms">
+      <h2 id="forms">Validación simple</h2>
+      <div class="row">
+        <input id="email" type="email" placeholder="correo@ejemplo.com" />
+        <button id="validateEmail">Validar</button>
+      </div>
+      <p id="emailMsg" class="warn"></p>
+    </section>
+
+    <section aria-labelledby="perf">
+      <h2 id="perf">Timing y rendimiento</h2>
+      <div class="row">
+        <button id="measure">Medir operación</button>
+        <button id="clearLog">Limpiar log</button>
+      </div>
+      <p class="muted">Prueba de rendimiento rápida con una operación intensiva.</p>
+    </section>
+  </main>
+
+  <footer>Hecho con HTML, CSS y JS — listo para experimentar.</footer>
+
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const log = msg => {
+      const el = $("#log");
+      const time = new Date().toLocaleTimeString();
+      el.textContent += `[${time}] ${msg}\n`;
+      el.scrollTop = el.scrollHeight;
+    };
+
+    // Encabezado dinámico
+    $("#heading-text").addEventListener("input", e => {
+      const value = e.target.value.trim();
+      const h2 = $("#typography");
+      h2.textContent = value || "Tipografía y semántica";
+    });
+
+    // Tema
+    $("#theme").addEventListener("change", e => {
+      const v = e.target.value;
+      const root = document.documentElement;
+      if (v === "solar") {
+        root.style.setProperty("--bg", "#0c1220");
+        root.style.setProperty("--panel", "#101826");
+        root.style.setProperty("--accent", "#fbbf24");
+      } else if (v === "forest") {
+        root.style.setProperty("--bg", "#0e1512");
+        root.style.setProperty("--panel", "#101a16");
+        root.style.setProperty("--accent", "#34d399");
+      } else {
+        root.style.setProperty("--bg", "#0f172a");
+        root.style.setProperty("--panel", "#111827");
+        root.style.setProperty("--accent", "#22d3ee");
+      }
+      log(`Tema aplicado: ${v}`);
+    });
+
+    // Probar eventos
+    $("#testBtn").addEventListener("click", () => {
+      $("#demo-link").setAttribute("href", "https://example.com");
+      log("Enlace actualizado a https://example.com");
+      log("Evento de clic capturado — todo OK ✅");
+    });
+
+    // Validación de email
+    $("#validateEmail").addEventListener("click", () => {
+      const email = $("#email").value.trim();
+      const msg = $("#emailMsg");
+      if (!email) {
+        msg.textContent = "Por favor, ingresa un correo."; msg.className = "warn";
+        log("Validación: campo vacío.");
+        return;
+      }
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      msg.textContent = ok ? "Correo válido." : "Formato inválido.";
+      msg.className = ok ? "ok" : "err";
+      log(`Validación de email: ${ok ? "válido" : "inválido"}.`);
+    });
+
+    // Medir rendimiento
+    const heavyOp = () => {
+      let sum = 0;
+      for (let i = 0; i < 5_000_00; i++) sum += Math.sqrt(i % 100);
+      return sum;
+    };
+    $("#measure").addEventListener("click", () => {
+      const t0 = performance.now();
+      const result = heavyOp();
+      const t1 = performance.now();
+      log(`Operación completada en ${(t1 - t0).toFixed(2)} ms. Resultado: ${result.toFixed(2)}`);
+    });
+
+    // Limpiar log
+    $("#clearLog").addEventListener("click", () => { $("#log").textContent = ""; });
+  </script>
+</body>
+</html>
